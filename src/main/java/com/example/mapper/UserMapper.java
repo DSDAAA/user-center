@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.example.model.domain.User
 */
 public interface UserMapper extends BaseMapper<User> {
-
 }
 
 
