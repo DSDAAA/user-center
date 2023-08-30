@@ -91,7 +91,7 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody long id, HttpServletRequest request) {
         //仅管理员可查询
         if (isAdmin(request)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.NO_AUTH);
         }
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
