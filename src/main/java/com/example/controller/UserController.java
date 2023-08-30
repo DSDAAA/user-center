@@ -49,7 +49,7 @@ public class UserController {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long userId = currentUser.getId();
         //todo 校验用户是否合法
@@ -61,12 +61,12 @@ public class UserController {
     @PostMapping("login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User result = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(result);
@@ -91,10 +91,10 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody long id, HttpServletRequest request) {
         //仅管理员可查询
         if (isAdmin(request)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         if (id <= 0) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         boolean result = userService.removeById(id);
         return ResultUtils.success(result);
@@ -116,7 +116,7 @@ public class UserController {
     @PostMapping("logout")
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         int userLogout = userService.userLogout(request);
         return ResultUtils.success(userLogout);

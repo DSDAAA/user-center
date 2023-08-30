@@ -62,22 +62,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userAccount", userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //todo 账户不能包含特殊字符
         if (!userPassword.equals(checkPassword)) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //星球编号不能重复
         queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("planetCode", planetCode);
         count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //todo 账户不能包含特殊字符
         if (!userPassword.equals(checkPassword)) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //2.加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -89,7 +89,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
         if (!saveResult) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         return user.getId();
     }
@@ -102,13 +102,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         if (StringUtils.isAllBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         if (userAccount.length() < 4) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         if (userPassword.length() < 8) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //todo 账户不能包含特殊字符
         //2.加密
@@ -120,7 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = userMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("user login failed, userAccound cannot match userPassword");
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //3.用户脱敏
         User saftyUser = getSafetyUser(user);
@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User getSafetyUser(User orginUser) {
         //判空
         if (orginUser == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //用户脱敏
         User saftyUser = new User();
